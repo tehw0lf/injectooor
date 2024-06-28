@@ -15,23 +15,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  // Function to validate script using Web Worker
-  const validateScript = (script) => {
-    return new Promise((resolve) => {
-      console.log("Starting Web Worker for validation");
-      const worker = new Worker("validator.js");
-      worker.onmessage = (event) => {
-        console.log("Web Worker validation result:", event.data);
-        resolve(event.data);
-      };
-      worker.onerror = (error) => {
-        console.error("Web Worker error:", error);
-        resolve({ valid: false, error: error.message });
-      };
-      worker.postMessage(script);
-    });
-  };
-
   // Update line numbers on input
   editorElement.addEventListener("input", updateLineNumbers);
 
@@ -55,17 +38,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Save the script and inject it when the textarea loses focus
   editorElement.addEventListener("blur", async (event) => {
     const newScript = editorElement.value;
-
-    console.log("Script on blur:", newScript);
-
-    const validation = await validateScript(newScript);
-
-    if (!validation.valid) {
-      window.alert(`Error in script: ${validation.error}`);
-      event.preventDefault();
-      editorElement.focus();
-      return;
-    }
 
     console.log("Saving script:", newScript);
     await browser.storage.local.set({ [url]: newScript });

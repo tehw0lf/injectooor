@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const editorElement = document.getElementById("scriptEditor");
   const lineNumbersElement = document.getElementById("line-numbers");
+  let worker;
 
   // Function to update line numbers
   const updateLineNumbers = () => {
@@ -13,17 +14,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  // Function to validate script using eval
+  // Function to validate script using Web Worker
   const validateScript = (script) => {
-    console.log("Validating script:", script);
-    try {
-      eval(script);
-      console.log("Validation successful");
-      return true;
-    } catch (e) {
-      console.log("Validation failed:", e.message);
-      return false;
-    }
+    return new Promise((resolve) => {
+      worker = new Worker("validator.js");
+      worker.onmessage = (event) => {
+        resolve(event.data);
+      };
+      worker.postMessage(script);
+    });
   };
 
   // Update line numbers on input
@@ -45,9 +44,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Save the script and inject it when the textarea loses focus
   editorElement.addEventListener("blur", async (event) => {
     const newScript = editorElement.value;
+    const validation = await validateScript(newScript);
 
-    if (!validateScript(newScript)) {
-      window.alert(`Error in script: ${e.message}`);
+    if (!validation.valid) {
+      window.alert(`Error in script: ${validation.error}`);
       event.preventDefault();
       editorElement.focus();
       return;

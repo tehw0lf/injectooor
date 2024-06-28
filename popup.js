@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const editorElement = document.getElementById("scriptEditor");
   const lineNumbersElement = document.getElementById("line-numbers");
-  const errorMessageElement = document.getElementById("error-message");
 
   // Function to update line numbers
   const updateLineNumbers = () => {
@@ -14,14 +13,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  // Function to validate script using Function constructor
+  // Function to validate script using eval
   const validateScript = (script) => {
+    console.log("Validating script:", script);
     try {
-      new Function(script);
-      errorMessageElement.innerHTML = "";
+      eval(script);
+      console.log("Validation successful");
       return true;
     } catch (e) {
-      errorMessageElement.innerHTML = `Error: ${e.message}`;
+      console.log("Validation failed:", e.message);
       return false;
     }
   };
@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const newScript = editorElement.value;
 
     if (!validateScript(newScript)) {
+      window.alert(`Error in script: ${e.message}`);
       event.preventDefault();
       editorElement.focus();
       return;

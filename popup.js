@@ -33,6 +33,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   editorElement.addEventListener("blur", async (event) => {
     const newScript = editorElement.value;
 
+    console.log("Script on blur:", newScript);
+
     await browser.storage.local.set({ [url]: newScript });
 
     // Inject the updated script into the current page
@@ -68,4 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Listen for theme changes
   window.matchMedia("(prefers-color-scheme: dark)").addListener(applyTheme);
   applyTheme();
+
+  // Focus the textarea input
+  editorElement.focus();
 });

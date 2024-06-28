@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const editorElement = document.getElementById("scriptEditor");
   const lineNumbersElement = document.getElementById("line-numbers");
-  let worker;
+
+  console.log("Popup script loaded");
 
   // Function to update line numbers
   const updateLineNumbers = () => {
@@ -17,9 +18,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Function to validate script using Web Worker
   const validateScript = (script) => {
     return new Promise((resolve) => {
-      worker = new Worker("validator.js");
+      console.log("Starting Web Worker for validation");
+      const worker = new Worker("validator.js");
       worker.onmessage = (event) => {
+        console.log("Web Worker validation result:", event.data);
         resolve(event.data);
+      };
+      worker.onerror = (error) => {
+        console.error("Web Worker error:", error);
+        resolve({ valid: false, error: error.message });
       };
       worker.postMessage(script);
     });
@@ -33,10 +40,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const activeTab = tabs[0];
   const url = activeTab.url;
 
+  console.log("Active tab URL:", url);
+
   // Load the script for the current active tab
   const result = await browser.storage.local.get(url);
   const script = result[url] || "";
   editorElement.value = script;
+
+  console.log("Loaded script:", script);
 
   // Initial update of line numbers
   updateLineNumbers();
@@ -44,6 +55,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Save the script and inject it when the textarea loses focus
   editorElement.addEventListener("blur", async (event) => {
     const newScript = editorElement.value;
+
+    console.log("Script on blur:", newScript);
+
     const validation = await validateScript(newScript);
 
     if (!validation.valid) {
@@ -53,11 +67,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+    console.log("Saving script:", newScript);
     await browser.storage.local.set({ [url]: newScript });
 
     // Inject the updated script into the current page
     await browser.tabs.executeScript(activeTab.id, {
-      code: `(() => {
+      code: `document.addEventListener('DOMContentLoaded', () => {
         const existingScript = document.getElementById('injectedScript');
         if (existingScript) existingScript.remove();
 
@@ -65,7 +80,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         scriptElement.id = 'injectedScript';
         scriptElement.textContent = ${JSON.stringify(newScript)};
         document.body.appendChild(scriptElement);
-      })();`,
+      });`,
     });
   });
 

@@ -77,6 +77,11 @@ body {
   margin-bottom: 10px;
 }
 
+.button-container {
+  display: flex;
+  justify-content: space-between;
+}
+
 button {
   display: inline-block;
   padding: 10px 20px;
@@ -89,15 +94,10 @@ button {
   transition: background-color 0.3s;
   width: 48%;
   box-sizing: border-box;
-  margin-right: 2%;
 }
 
 button:hover {
   background-color: #222;
-}
-
-button:last-of-type {
-  margin-right: 0;
 }
 
 /* Dark mode styles */

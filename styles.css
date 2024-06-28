@@ -84,19 +84,20 @@ button {
   cursor: pointer;
   border: none;
   border-radius: 5px;
-  background-color: #555;
+  background-color: #444;
   color: white;
   transition: background-color 0.3s;
-  width: calc(50% - 10px);
+  width: 48%;
   box-sizing: border-box;
+  margin-right: 2%;
 }
 
 button:hover {
-  background-color: #333;
+  background-color: #222;
 }
 
-button + button {
-  margin-left: 10px;
+button:last-of-type {
+  margin-right: 0;
 }
 
 /* Dark mode styles */
@@ -123,11 +124,11 @@ button + button {
   }
 
   button {
-    background-color: #555;
+    background-color: #444;
   }
 
   button:hover {
-    background-color: #333;
+    background-color: #222;
   }
 }
 

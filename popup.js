@@ -21,14 +21,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const activeTab = tabs[0];
   const url = activeTab.url;
 
-  console.log("Active tab URL:", url);
-
   // Load the script for the current active tab
   const result = await browser.storage.local.get(url);
   const script = result[url] || "";
   editorElement.value = script;
-
-  console.log("Loaded script from localStorage:", script);
 
   // Initial update of line numbers
   updateLineNumbers();
@@ -37,13 +33,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   editorElement.addEventListener("blur", async (event) => {
     const newScript = editorElement.value;
 
-    console.log("Script on blur:", newScript);
-
     await browser.storage.local.set({ [url]: newScript });
 
     // Inject the updated script into the current page
-    await browser.tabs.executeScript(activeTab.id, {
-      code: `(() => {
+    await browser.tabs
+      .executeScript(activeTab.id, {
+        code: `(() => {
         const existingScript = document.getElementById('injectedScript');
         if (existingScript) existingScript.remove();
 
@@ -52,7 +47,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         scriptElement.textContent = ${JSON.stringify(newScript)};
         document.body.appendChild(scriptElement);
       })();`,
-    });
+      })
+      .catch((e) => console.error(`Error injecting script: ${e}`));
   });
 
   // Apply theme-based styling

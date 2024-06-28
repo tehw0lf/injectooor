@@ -18,8 +18,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const script = result[url] || "";
   textarea.value = script;
 
-  // Save the script and inject it when the textarea content changes
-  textarea.addEventListener("input", async () => {
+  // Save the script and inject it when the textarea loses focus
+  textarea.addEventListener("blur", async () => {
     const newScript = textarea.value;
     await browser.storage.local.set({ [url]: newScript });
 

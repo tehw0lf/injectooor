@@ -37,6 +37,12 @@ body {
   overflow: hidden;
 }
 
+#error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
 #extension-button {
   width: 48px;
   height: 48px;

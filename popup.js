@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const editorElement = document.getElementById("scriptEditor");
   const lineNumbersElement = document.getElementById("line-numbers");
+  const errorMessageElement = document.getElementById("error-message");
 
   // Function to update line numbers
   const updateLineNumbers = () => {
@@ -10,6 +11,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       const lineNumber = document.createElement("span");
       lineNumber.textContent = i;
       lineNumbersElement.appendChild(lineNumber);
+    }
+  };
+
+  // Function to validate script using Function constructor
+  const validateScript = (script) => {
+    try {
+      new Function(script);
+      errorMessageElement.innerHTML = "";
+      return true;
+    } catch (e) {
+      errorMessageElement.innerHTML = `Error: ${e.message}`;
+      return false;
     }
   };
 
@@ -30,8 +43,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateLineNumbers();
 
   // Save the script and inject it when the textarea loses focus
-  editorElement.addEventListener("blur", async () => {
+  editorElement.addEventListener("blur", async (event) => {
     const newScript = editorElement.value;
+
+    if (!validateScript(newScript)) {
+      event.preventDefault();
+      editorElement.focus();
+      return;
+    }
+
     await browser.storage.local.set({ [url]: newScript });
 
     // Inject the updated script into the current page

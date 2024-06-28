@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const textarea = document.createElement("textarea");
   textarea.id = "scriptEditor";
   textarea.style.width = "100%";
-  textarea.style.height = "300px";
+  textarea.style.height = "600px"; // Adjusted for the new height
   editorElement.appendChild(textarea);
 
   // Get the current active tab

@@ -12,7 +12,7 @@ body {
 #extension-button {
   width: 48px;
   height: 48px;
-  background-image: url('icon.png');
+  background-image: url("icon.png");
   background-size: cover;
 }
 
@@ -30,4 +30,23 @@ body {
 
 .error-script {
   background-color: red;
+}
+
+/* Light mode styles */
+body {
+  background-color: white;
+  color: black;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1e1e1e;
+    color: white;
+  }
+
+  #scriptEditor {
+    background-color: #2d2d2d;
+    color: white;
+  }
 }

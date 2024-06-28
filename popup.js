@@ -2,8 +2,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const editorElement = document.getElementById("scriptEditor");
   const lineNumbersElement = document.getElementById("line-numbers");
 
-  console.log("Popup script loaded");
-
   // Function to update line numbers
   const updateLineNumbers = () => {
     const lines = editorElement.value.split("\n").length;
@@ -30,7 +28,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const script = result[url] || "";
   editorElement.value = script;
 
-  console.log("Loaded script:", script);
+  console.log("Loaded script from localStorage:", script);
 
   // Initial update of line numbers
   updateLineNumbers();
@@ -39,12 +37,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   editorElement.addEventListener("blur", async (event) => {
     const newScript = editorElement.value;
 
-    console.log("Saving script:", newScript);
+    console.log("Script on blur:", newScript);
+
     await browser.storage.local.set({ [url]: newScript });
 
     // Inject the updated script into the current page
     await browser.tabs.executeScript(activeTab.id, {
-      code: `document.addEventListener('DOMContentLoaded', () => {
+      code: `(() => {
         const existingScript = document.getElementById('injectedScript');
         if (existingScript) existingScript.remove();
 
@@ -52,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         scriptElement.id = 'injectedScript';
         scriptElement.textContent = ${JSON.stringify(newScript)};
         document.body.appendChild(scriptElement);
-      });`,
+      })();`,
     });
   });
 

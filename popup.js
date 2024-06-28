@@ -1,12 +1,20 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  const editorElement = document.getElementById("editor");
+  const editorElement = document.getElementById("scriptEditor");
+  const lineNumbersElement = document.getElementById("line-numbers");
 
-  // Create a simple textarea for the editor
-  const textarea = document.createElement("textarea");
-  textarea.id = "scriptEditor";
-  textarea.style.width = "100%";
-  textarea.style.height = "600px"; // Adjusted for the new height
-  editorElement.appendChild(textarea);
+  // Function to update line numbers
+  const updateLineNumbers = () => {
+    const lines = editorElement.value.split("\n").length;
+    lineNumbersElement.innerHTML = "";
+    for (let i = 1; i <= lines; i++) {
+      const lineNumber = document.createElement("span");
+      lineNumber.textContent = i;
+      lineNumbersElement.appendChild(lineNumber);
+    }
+  };
+
+  // Update line numbers on input
+  editorElement.addEventListener("input", updateLineNumbers);
 
   // Get the current active tab
   const tabs = await browser.tabs.query({ active: true, currentWindow: true });
@@ -16,11 +24,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Load the script for the current active tab
   const result = await browser.storage.local.get(url);
   const script = result[url] || "";
-  textarea.value = script;
+  editorElement.value = script;
+
+  // Initial update of line numbers
+  updateLineNumbers();
 
   // Save the script and inject it when the textarea loses focus
-  textarea.addEventListener("blur", async () => {
-    const newScript = textarea.value;
+  editorElement.addEventListener("blur", async () => {
+    const newScript = editorElement.value;
     await browser.storage.local.set({ [url]: newScript });
 
     // Inject the updated script into the current page
@@ -44,10 +55,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     ).matches;
     if (isDarkMode) {
       document.body.classList.add("dark-mode");
-      textarea.classList.add("dark-mode");
+      editorElement.classList.add("dark-mode");
     } else {
       document.body.classList.remove("dark-mode");
-      textarea.classList.remove("dark-mode");
+      editorElement.classList.remove("dark-mode");
     }
   };
 

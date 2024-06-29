@@ -3,7 +3,7 @@ name: Build and Publish Firefox Extension
 on:
   push:
     branches:
-      - main # Change to the branch you want to trigger the action
+      - main
 
 jobs:
   build:
@@ -16,25 +16,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4.0.2
         with:
-          node-version: "20" # Use the latest LTS version of Node.js
+          node-version: "20"
 
       - name: Create extension zip
-        run: zip -r injectooor.zip * -x .git\* -x node_modules\* -x .github\*
+        run: zip -r injectooor.zip * -x .git\* -x .github\*
         shell: bash
-
-      - name: Generate JWT Token
-        id: generate_jwt
-        run: echo "::set-output name=token::$(npx jsonwebtoken -k ${{ secrets.AMO_API_SECRET }} -a HS256 --sub ${{ secrets.AMO_API_KEY }})"
 
       - name: Publish to AMO
-        env:
-          AMO_API_KEY: ${{ secrets.AMO_API_KEY }}
-          AMO_API_SECRET: ${{ secrets.AMO_API_SECRET }}
-          JWT_TOKEN: ${{ steps.generate_jwt.outputs.token }}
-        run: |
-          curl -s -o response.json \
-            -H "Authorization: JWT $JWT_TOKEN" \
-            -F "upload=@injectooor.zip" \
-            https://addons.mozilla.org/api/v4/addons/@531480d4-0398-499e-bdfc-79e7d6cf0055/versions/
-          cat response.json
-        shell: bash
+        uses: cmancone/action-publish-firefox-addon@v1.0.5
+        with:
+          api_key: ${{ secrets.AMO_API_KEY }}
+          api_secret: ${{ secrets.AMO_API_SECRET }}
+          source: injectooor.zip
+          id: 531480d4-0398-499e-bdfc-79e7d6cf0055

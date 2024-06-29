@@ -18,7 +18,7 @@ jobs:
         shell: bash
 
       - name: Publish to AMO
-        uses: cmancone/action-publish-firefox-addon@v1.0.5
+        uses: wdzeng/action-publish-firefox-addon@v1.0.5
         with:
           api_key: ${{ secrets.AMO_API_KEY }}
           api_secret: ${{ secrets.AMO_API_SECRET }}

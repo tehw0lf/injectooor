@@ -1,0 +1,34 @@
+name: Build and Publish Firefox Extension
+
+on:
+  push:
+    branches:
+      - main # Change to the branch you want to trigger the action
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Create extension zip
+        run: |
+          mkdir -p extension
+          cp -R * extension
+          cd extension
+          zip -r ../injectooor.zip *
+        shell: bash
+
+      - name: Publish to AMO
+        env:
+          AMO_API_KEY: ${{ secrets.AMO_API_KEY }}
+          AMO_API_SECRET: ${{ secrets.AMO_API_SECRET }}
+        run: |
+          curl -s -o response.json \
+            -H "Authorization: JWT $(npx --yes jsonwebtoken -k $AMO_API_SECRET -a HS256 --sub $AMO_API_KEY)" \
+            -F "upload=@injectooor.zip" \
+            https://addons.mozilla.org/api/v4/addons/{531480d4-0398-499e-bdfc-79e7d6cf0055}/versions/
+          cat response.json
+        shell: bash

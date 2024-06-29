@@ -1,7 +1,7 @@
 // Function to create a canvas and draw the icon with the desired background color
 function createIcon(status) {
   const icon = new Image();
-  icon.src = browser.runtime.getURL("icon.png");
+  icon.src = browser.runtime.getURL("icon-19.png");
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
 

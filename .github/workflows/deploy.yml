@@ -22,13 +22,18 @@ jobs:
         run: zip -r injectooor.zip * -x .git\* -x node_modules\* -x .github\*
         shell: bash
 
+      - name: Generate JWT Token
+        id: generate_jwt
+        run: echo "::set-output name=token::$(npx jsonwebtoken -k ${{ secrets.AMO_API_SECRET }} -a HS256 --sub ${{ secrets.AMO_API_KEY }})"
+
       - name: Publish to AMO
         env:
           AMO_API_KEY: ${{ secrets.AMO_API_KEY }}
           AMO_API_SECRET: ${{ secrets.AMO_API_SECRET }}
+          JWT_TOKEN: ${{ steps.generate_jwt.outputs.token }}
         run: |
           curl -s -o response.json \
-            -H "Authorization: JWT $(npx --yes jsonwebtoken -k $AMO_API_SECRET -a HS256 --sub $AMO_API_KEY)" \
+            -H "Authorization: JWT $JWT_TOKEN" \
             -F "upload=@injectooor.zip" \
             https://addons.mozilla.org/api/v4/addons/@531480d4-0398-499e-bdfc-79e7d6cf0055/versions/
           cat response.json

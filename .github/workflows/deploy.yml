@@ -11,14 +11,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.1.7
 
       - name: Create extension zip
-        run: |
-          mkdir -p extension
-          cp -R * extension
-          cd extension
-          zip -r ../injectooor.zip *
+        run: zip -r injectooor.zip * -x .git\* -x node_modules\* -x .github\*
         shell: bash
 
       - name: Publish to AMO
@@ -29,6 +25,6 @@ jobs:
           curl -s -o response.json \
             -H "Authorization: JWT $(npx --yes jsonwebtoken -k $AMO_API_SECRET -a HS256 --sub $AMO_API_KEY)" \
             -F "upload=@injectooor.zip" \
-            https://addons.mozilla.org/api/v4/addons/{531480d4-0398-499e-bdfc-79e7d6cf0055}/versions/
+            https://addons.mozilla.org/api/v4/addons/@531480d4-0398-499e-bdfc-79e7d6cf0055/versions/
           cat response.json
         shell: bash

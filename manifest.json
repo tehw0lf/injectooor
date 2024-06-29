@@ -11,8 +11,8 @@
   "browser_action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "19": "icon-base.png",
-      "38": "icon-base.png"
+      "19": "icon.png",
+      "38": "icon.png"
     }
   },
   "options_ui": {
@@ -27,6 +27,6 @@
     }
   ],
   "icons": {
-    "48": "icon-base.png"
+    "48": "icon.png"
   }
 }

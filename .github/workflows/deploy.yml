@@ -13,11 +13,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4.1.7
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4.0.2
-        with:
-          node-version: "20"
-
       - name: Create extension zip
         run: zip -r injectooor.zip * -x .git\* -x .github\*
         shell: bash

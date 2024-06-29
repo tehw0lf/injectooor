@@ -16,18 +16,30 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Update line numbers on input
   editorElement.addEventListener("input", updateLineNumbers);
 
+  // Sync scroll position between textarea and line numbers
+  editorElement.addEventListener("scroll", () => {
+    lineNumbersElement.scrollTop = editorElement.scrollTop;
+  });
+
   // Get the current active tab
   const tabs = await browser.tabs.query({ active: true, currentWindow: true });
   const activeTab = tabs[0];
   const url = activeTab.url;
+
+  console.log("Active tab URL:", url);
 
   // Load the script for the current active tab
   const result = await browser.storage.local.get(url);
   const script = result[url] || "";
   editorElement.value = script;
 
+  console.log("Loaded script from localStorage:", script);
+
   // Initial update of line numbers
   updateLineNumbers();
+
+  // Focus the textarea input
+  editorElement.focus();
 
   // Save the script and inject it when the textarea loses focus
   editorElement.addEventListener("blur", async (event) => {
@@ -38,9 +50,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     await browser.storage.local.set({ [url]: newScript });
 
     // Inject the updated script into the current page
-    await browser.tabs
-      .executeScript(activeTab.id, {
-        code: `(() => {
+    await browser.tabs.executeScript(activeTab.id, {
+      code: `(() => {
         const existingScript = document.getElementById('injectedScript');
         if (existingScript) existingScript.remove();
 
@@ -49,8 +60,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         scriptElement.textContent = ${JSON.stringify(newScript)};
         document.body.appendChild(scriptElement);
       })();`,
-      })
-      .catch((e) => console.error(`Error injecting script: ${e}`));
+    });
   });
 
   // Apply theme-based styling
@@ -70,7 +80,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Listen for theme changes
   window.matchMedia("(prefers-color-scheme: dark)").addListener(applyTheme);
   applyTheme();
-
-  // Focus the textarea input
-  editorElement.focus();
 });

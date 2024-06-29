@@ -11,23 +11,16 @@ Injectooor is a minimalistic Firefox extension to inject custom JavaScript into 
 
 ## Installation
 
+### From Mozilla Add-ons
+
+Install the extension directly from [Mozilla Add-ons](https://addons.mozilla.org/).
+
 ### Temporary Installation for Development
 
 1. Open Firefox and navigate to `about:debugging`.
 2. Click on "This Firefox" in the sidebar.
 3. Click on "Load Temporary Add-on..."
 4. Select the `manifest.json` file from your extension directory.
-
-### Permanent Installation
-
-To install the extension permanently, you need to sign it through Mozilla's Add-ons Developer Hub:
-
-1. Create a Mozilla Developer Account at [Firefox Add-ons Developer Hub](https://addons.mozilla.org/en-US/developers/).
-2. Submit your extension as an unlisted add-on.
-3. Download the signed `.xpi` file once it's reviewed.
-4. Open Firefox and navigate to `about:addons`.
-5. Click on the gear icon and select "Install Add-on From File...".
-6. Select the signed `.xpi` file to install the extension.
 
 ## Usage
 

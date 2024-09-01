@@ -18,9 +18,9 @@ jobs:
         shell: bash
 
       - name: Publish to AMO
-        uses: wdzeng/firefox-addon@v1
+        uses: wdzeng/firefox-addon@v1.0.5
         with:
-          addon-guid: 531480d4-0398-499e-bdfc-79e7d6cf0055
+          addon-guid: "{531480d4-0398-499e-bdfc-79e7d6cf0055}"
           xpi-path: injectooor.zip
           self-hosted: false
           jwt-issuer: ${{ secrets.AMO_API_KEY }}

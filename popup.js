@@ -2,6 +2,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const editorElement = document.getElementById("scriptEditor");
   const lineNumbersElement = document.getElementById("line-numbers");
 
+  // Load the utility functions from utils.js
+  const { updateIcon, injectScript } = await import("./utils.js");
+
   // Function to update line numbers
   const updateLineNumbers = () => {
     const lines = editorElement.value.split("\n").length;
@@ -38,10 +41,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Initial update of line numbers
   updateLineNumbers();
 
+  // Initial update of the icon based on whether a script exists
+  updateIcon(!!script ? "active" : "no-script");
+
   // Focus the textarea input
   editorElement.focus();
 
-  // Save the script and inject it when the textarea loses focus
+  // Save the script, inject it, and update the icon when the textarea loses focus
   editorElement.addEventListener("blur", async (event) => {
     const newScript = editorElement.value;
 
@@ -50,17 +56,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     await browser.storage.local.set({ [url]: newScript });
 
     // Inject the updated script into the current page
-    await browser.tabs.executeScript(activeTab.id, {
-      code: `(() => {
-        const existingScript = document.getElementById('injectedScript');
-        if (existingScript) existingScript.remove();
-
-        const scriptElement = document.createElement('script');
-        scriptElement.id = 'injectedScript';
-        scriptElement.textContent = ${JSON.stringify(newScript)};
-        document.body.appendChild(scriptElement);
-      })();`,
-    });
+    if (newScript) {
+      injectScript(activeTab.id, url, newScript);
+    } else {
+      updateIcon("no-script");
+    }
   });
 
   // Apply theme-based styling

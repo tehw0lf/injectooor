@@ -1,27 +1,23 @@
-name: Build and Publish Firefox Extension
+name: zip and publish
 
 on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4.1.7
-
-      - name: Create extension zip
-        run: zip -r injectooor.zip * -x .git\* -x .github\*
-        shell: bash
-
-      - name: Publish to AMO
-        uses: wdzeng/firefox-addon@v1.0.5
-        with:
-          addon-guid: "{531480d4-0398-499e-bdfc-79e7d6cf0055}"
-          xpi-path: injectooor.zip
-          self-hosted: false
-          jwt-issuer: ${{ secrets.AMO_API_KEY }}
-          jwt-secret: ${{ secrets.AMO_API_SECRET }}
+    name: external workflow
+    uses: tehw0lf/workflows/.github/workflows/build-test-publish.yml@main
+    permissions:
+      actions: write
+      contents: write
+      packages: write
+    with:
+      event_name: ${{ github.event_name }}
+      addon_guid: "{531480d4-0398-499e-bdfc-79e7d6cf0055}"
+      xpi_path: "injectooor.zip"
+    secrets:
+      AMO_API_KEY: ${{ secrets.AMO_API_KEY }}
+      AMO_API_SECRET: ${{ secrets.AMO_API_SECRET }}

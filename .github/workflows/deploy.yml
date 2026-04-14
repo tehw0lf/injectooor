@@ -17,6 +17,7 @@ jobs:
       contents: write
       packages: write
       security-events: write
+      pull-requests: write
     with:
       addon_guid: "{531480d4-0398-499e-bdfc-79e7d6cf0055}"
       xpi_path: "injectooor.zip"

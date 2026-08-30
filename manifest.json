@@ -1,8 +1,13 @@
 {
   "manifest_version": 2,
   "name": "injectooor",
-  "version": "1.5",
+  "version": "1.6",
   "description": "A minimalistic Firefox extension to inject custom JavaScript into specified URLs.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{531480d4-0398-499e-bdfc-79e7d6cf0055}"
+    }
+  },
   "permissions": ["storage", "tabs", "<all_urls>", "activeTab"],
   "background": {
     "scripts": ["background.js"],
